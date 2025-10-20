@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evaluar para Aprender — Actividad Grupo 8</title>
+  <style>
+    :root{
+      --bg:#e6dbff; /* violeta clarito */
+      --card:#f5efff;
+      --ink:#2c2056;
+      --muted:#6c5a9e;
+      --primary:#7c5cff;
+      --primary-600:#6a48ff;
+      --accent:#a370ff;
+      --danger:#ff5470;
+      --ok:#34d399;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink);min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:0}
+    header.banner{width:100%;background:linear-gradient(90deg,#b699ff,var(--primary));color:white;text-align:center;padding:16px 0;font-weight:700;font-size:1.4rem;letter-spacing:.5px;}
+    .app{width:min(920px,100%);padding:24px}
+    .card{background:var(--card);border:1px solid rgba(0,0,0,.08);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+    h1{margin:0;font-weight:800;font-size:clamp(1.2rem,2.8vw,1.6rem)}
+    .container{padding:24px}
+    .grid{display:grid;gap:16px}
+    .two{grid-template-columns:1fr 1fr}
+    @media (max-width:720px){.two{grid-template-columns:1fr}}
+    select,button{appearance:none}
+    .select, .btn{border-radius:12px;border:1px solid rgba(0,0,0,.1);background:white;color:var(--ink);padding:12px 14px;font:inherit}
+    .btn.primary{background:linear-gradient(180deg,var(--primary),var(--primary-600));border:0;color:white}
+    .btn.ghost{background:transparent;border:1px dashed rgba(0,0,0,.2)}
+    .btn[disabled]{opacity:.5;cursor:not-allowed}
+    .muted{color:var(--muted);font-size:.9rem}
+    .q-card{padding:22px;border-radius:16px;border:1px solid rgba(0,0,0,.08);background:white}
+    .q{font-size:1.1rem;font-weight:700;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+    .options{display:grid;gap:10px}
+    .opt{width:100%;text-align:left;padding:12px 14px;border-radius:12px;border:1px solid rgba(0,0,0,.1);background:linear-gradient(180deg,#fff,#f7f4ff);cursor:pointer}
+    .opt:hover{border-color:rgba(0,0,0,.25)}
+    .opt.correct{outline:2px solid var(--ok)}
+    .opt.wrong{outline:2px solid var(--danger)}
+    .feedback{margin-top:10px;font-size:.95rem}
+    .ok{color:var(--ok)}
+    .bad{color:var(--danger)}
+    .progress{height:10px;background:#d2c2ff;border-radius:999px;overflow:hidden;border:1px solid rgba(0,0,0,.1)}
+    .bar{height:100%;background:linear-gradient(90deg,var(--accent),#7a5cff);width:0}
+    .pill{background:#ede3ff;border:1px solid rgba(0,0,0,.1);border-radius:999px;padding:6px 10px;display:inline-flex;gap:8px;align-items:center}
+    .footer{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+    .sm{font-size:.85rem}
+    .center{text-align:center}
+    footer{margin-top:auto;width:100%;text-align:center;padding:10px;background:linear-gradient(90deg,#b699ff,var(--primary));color:white;font-size:.9rem}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  </style>
+</head>
+<body>
+  <header class="banner">Actividad del grupo 8</header>
+  <main class="app">
+    <div class="card container">
+      <header style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <img src="https://cdn-icons-png.flaticon.com/512/1995/1995574.png" alt="icono computadora" width="36" height="36">
+        <h1>💻 Evaluar para aprender · Juego sobre evaluación educativa</h1>
+      </header>
+      
+      <section id="screen-start" class="grid">
+        <p class="muted">Elegí una <strong>categoría</strong> de la asignatura y resolvé <strong>5 preguntas</strong>. Recibirás retroalimentación inmediata y un puntaje final.</p>
+        <div class="grid two">
+          <label class="select">
+            <span>📚 Categoría</span>
+            <select id="category">
+              <option value="tipos">Tipos de evaluación</option>
+              <option value="feedback">Retroalimentación formativa</option>
+              <option value="instrumentos">Instrumentos de evaluación</option>
+              <option value="criterios">Criterios, escalas y calificación</option>
+            </select>
+          </label>
+          <div class="row">
+            <button class="btn primary" id="btn-start">Comenzar</button>
+            <button class="btn ghost" id="btn-mix">Aleatorio mixto</button>
+          </div>
+        </div>
+        <p class="muted sm">Sugerencia didáctica: podés usarlo como <em>evaluación diagnóstica</em> o como <em>formativa</em> para abrir debate tras cada pregunta.</p>
+      </section>
+
+      <section id="screen-game" style="display:none">
+        <div class="grid" style="gap:14px">
+          <div class="row" style="display:flex;justify-content:space-between">
+            <span class="pill">Tema: <strong id="label-cat">–</strong></span>
+            <span class="pill">Puntaje: <strong id="score">0</strong>/5</span>
+          </div>
+          <div class="progress"><div class="bar" id="bar"></div></div>
+          <div class="q-card">
+            <p class="q"><img src="https://cdn-icons-png.flaticon.com/512/1995/1995574.png" width="24" height="24"> <span id="q-text">Pregunta</span></p>
+            <div class="options" id="options"></div>
+            <div id="feedback" class="feedback"></div>
+          </div>
+          <div class="footer">
+            <button class="btn" id="btn-next" disabled>Siguiente ▸</button>
+            <span class="muted sm" id="counter">1 / 5</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-end" class="center" style="display:none">
+        <h2 id="end-title">¡Resultado!</h2>
+        <p class="muted">Puntaje obtenido: <strong id="final-score">0/5</strong></p>
+        <div class="row center" style="justify-content:center">
+          <button class="btn primary" id="btn-replay">Reintentar</button>
+          <button class="btn ghost" id="btn-home">Elegir otra categoría</button>
+        </div>
+        <p class="muted sm" style="margin-top:12px">Consejo: usá el resultado para conversarlo en grupo y proponer mejoras de consigna o de instrumento.</p>
+      </section>
+    </div>
+  </main>
+  <footer>
+    Evaluación a través de Tecnologías Digitales · Grupo 8 — Integrantes: Laura, ... (completar nombres)
+  </footer>
+
+  <script>
+    /*// -------------------------------
+// Banco de preguntas por categoría
+// -------------------------------
+/** Estructura: { texto, opciones:[], correcta: index, explicacion } */
+const BANK = {
+  tipos: {
+    label: "Tipos de evaluación",
+    items: [
+      { texto: "La docente aplica un cuestionario al inicio de la unidad para conocer saberes previos.", opciones: ["Evaluación sumativa","Evaluación diagnóstica","Evaluación formativa"], correcta: 1, explicacion: "Se usa al inicio para orientar la enseñanza: diagnóstica." },
+      { texto: "Se realizan actividades con devoluciones descriptivas durante el proceso para ajustar la enseñanza.", opciones: ["Evaluación formativa","Evaluación certificadora","Evaluación final"], correcta: 0, explicacion: "Acompaña y regula el aprendizaje: formativa." },
+      { texto: "Un examen final acredita la unidad y otorga calificación para la promoción.", opciones: ["Formativa","Sumativa","Diagnóstica"], correcta: 1, explicacion: "Cierra proceso y acredita: sumativa." },
+      { texto: "Un docente usa resultados de una prueba para reorganizar grupos y andamiajes.", opciones: ["Función reguladora (formativa)","Función acreditadora (sumativa)","Función clasificatoria (diagnóstica)"] , correcta: 0, explicacion: "La decisión pedagógica se basa en evidencias para mejorar." },
+      { texto: "Se pide un producto integrador final con rúbrica y se registra una nota.", opciones: ["Diagnóstica","Procesual","Sumativa"], correcta: 2, explicacion: "Criterios + nota al cierre del recorrido: sumativa." },
+    ]
+  },
+  feedback: {
+    label: "Retroalimentación formativa",
+    items: [
+      { texto: "“Tu análisis es claro; para fortalecerlo, agregá una fuente que respalde la conclusión.”", opciones: ["Feedback descriptivo con feedforward","Solo calificación","Juicio general sin orientación"], correcta: 0, explicacion: "Describe y orienta el próximo paso (feedforward)." },
+      { texto: "“7/10”.", opciones: ["Feedback suficiente","Calificación sin retroalimentación","Retroalimentación centrada en el proceso"], correcta: 1, explicacion: "La nota no indica cómo mejorar." },
+      { texto: "“Ordená los argumentos antes de la evidencia.”", opciones: ["Centrado en el proceso","Centrado en el resultado","Elogio genérico"], correcta: 0, explicacion: "Se enfoca en estrategias para mejorar." },
+      { texto: "“Excelente trabajo.”", opciones: ["Descriptivo","Evaluativo global","Formativo"], correcta: 1, explicacion: "Es valoración general sin información útil para avanzar." },
+      { texto: "“Compará tu respuesta con el criterio 2 de la rúbrica y ajustá el apartado de ejemplos.”", opciones: ["Alineado a criterios","No pertinente","Castigador"], correcta: 0, explicacion: "Vincula feedback con criterios explícitos." },
+    ]
+  },
+  instrumentos: {
+    label: "Instrumentos de evaluación",
+    items: [
+      { texto: "Matriz con criterios y niveles de desempeño para valorar un proyecto.", opciones: ["Lista de cotejo","Rúbrica analítica","Escala numérica"], correcta: 1, explicacion: "La rúbrica describe niveles por criterio." },
+      { texto: "Registro binario (sí/no) del cumplimiento de ítems.", opciones: ["Lista de cotejo","Rúbrica holística","Portafolio"], correcta: 0, explicacion: "Chequea presencia/ausencia de evidencias." },
+      { texto: "Colección organizada de evidencias del proceso y producto del estudiante.", opciones: ["Portafolio","Escala de apreciación","Prueba objetiva"], correcta: 0, explicacion: "Portafolio reúne evidencias con reflexión." },
+      { texto: "Línea con grados de acuerdo para valorar frecuencia o calidad (por ejemplo, 1 a 5).", opciones: ["Escala de apreciación","Lista de cotejo","Rúbrica"] , correcta: 0, explicacion: "La escala gradúa intensidad o logro." },
+      { texto: "Instrumento que describe globalmente el desempeño con un único juicio global.", opciones: ["Rúbrica holística","Rúbrica analítica","Lista de cotejo"], correcta: 0, explicacion: "Holística ofrece valoración global por nivel." },
+    ]
+  },
+  criterios: {
+    label: "Criterios, escalas y calificación",
+    items: [
+      { texto: "En una rúbrica, “coherencia del argumento” es un…", opciones: ["Indicador","Criterio","Evidencia"], correcta: 1, explicacion: "El criterio nombra el aspecto a valorar; el indicador operacionaliza." },
+      { texto: "“Presenta al menos dos fuentes confiables” corresponde a un…", opciones: ["Criterio","Indicador","Nivel de desempeño"], correcta: 1, explicacion: "Indicador observable vinculado a un criterio." },
+      { texto: "Una escala de 1 a 4 con descriptores por nivel se usa para…", opciones: ["Calificar sin criterios","Valorar niveles de logro","Sólo diagnosticar"], correcta: 1, explicacion: "Escalas + descriptores apoyan calificación criterial." },
+      { texto: "Al asignar nota, el docente se basa en criterios comunicados antes.", opciones: ["Evaluación criterial","Evaluación normativa","Evaluación ipsativa"], correcta: 0, explicacion: "Criterial compara con criterios, no con el grupo." },
+      { texto: "La institución define promoción con nota mínima 7.", opciones: ["Criterio de desempeño","Régimen de promoción","Instrumento de evaluación"], correcta: 1, explicacion: "Es una regla de promoción/certificación, no un instrumento." },
+    ]
+  }
+};
+
+// -------------------------------
+// Utilidades
+// -------------------------------
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
+const shuffle = arr => arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+
+// -------------------------------
+// Estado del juego
+// -------------------------------
+let currentSet = [];
+let idx = 0;
+let score = 0;
+let currentLabel = "";
+
+function goHome(){
+  $('#screen-start').style.display = '';
+  $('#screen-game').style.display = 'none';
+  $('#screen-end').style.display = 'none';
+}
+
+function startGame(categoryKey, mixed=false){
+  const sets = Object.values(BANK).map(s=>s.items);
+  if(mixed){
+    let pick = [];
+    for(const k of Object.keys(BANK)){
+      pick.push(shuffle(BANK[k].items)[0]);
+    }
+    while(pick.length<5){
+      pick.push(shuffle(sets[Math.floor(Math.random()*sets.length)])[0]);
+    }
+    currentSet = shuffle(pick).slice(0,5);
+    currentLabel = 'Mixto';
+  } else {
+    const pack = BANK[categoryKey];
+    currentSet = shuffle(pack.items).slice(0,5);
+    currentLabel = pack.label;
+  }
+  idx = 0; score = 0;
+  $('#score').textContent = score;
+  $('#label-cat').textContent = currentLabel;
+  $('#counter').textContent = `1 / ${currentSet.length}`;
+  updateBar();
+  $('#screen-start').style.display = 'none';
+  $('#screen-game').style.display = '';
+  $('#screen-end').style.display = 'none';
+  renderQuestion();
+}
+
+function updateBar(){
+  const pct = (idx/currentSet.length)*100;
+  $('#bar').style.width = pct + '%';
+}
+
+function renderQuestion(){
+  const q = currentSet[idx];
+  $('#q-text').textContent = q.texto;
+  const optsHtml = q.opciones.map((op,i)=>`<button class="opt" data-i="${i}">${op}</button>`).join('');
+  $('#options').innerHTML = optsHtml;
+  $('#feedback').textContent = '';
+  $('#btn-next').disabled = true;
+  $('#counter').textContent = `${idx+1} / ${currentSet.length}`;
+  $$('#options .opt').forEach(btn=>btn.addEventListener('click',()=>choose(btn,q)));
+}
+
+function choose(btn,q){
+  $$('#options .opt').forEach(b=>b.disabled=true);
+  const i = Number(btn.dataset.i);
+  const correctBtn = $$('#options .opt')[q.correcta];
+  if(i===q.correcta){
+    btn.classList.add('correct');
+    $('#feedback').innerHTML = `<span class="ok">✅ Correcto.</span> ${q.explicacion}`;
+    score++; $('#score').textContent = score;
+  } else {
+    btn.classList.add('wrong');
+    correctBtn.classList.add('correct');
+    $('#feedback').innerHTML = `<span class="bad">✖ Incorrecto.</span> ${q.explicacion}`;
+  }
+  $('#btn-next').disabled = false;
+}
+
+function next(){
+  idx++;
+  updateBar();
+  if(idx>=currentSet.length){
+    end();
+  } else {
+    renderQuestion();
+  }
+}
+
+function end(){
+  $('#screen-game').style.display = 'none';
+  $('#screen-end').style.display = '';
+  $('#end-title').textContent = score>=4 ? '🎉 ¡Excelente! ¡Dominás el tema!' : (score===3 ? '✔ Buen avance' : '🌱 Para seguir trabajando');
+  $('#final-score').textContent = `${score}/${currentSet.length}`;
+}
+
+// -------------------------------
+// Eventos UI
+// -------------------------------
+$('#btn-start').addEventListener('click',()=> startGame($('#category').value,false));
+$('#btn-mix').addEventListener('click',()=> startGame(null,true));
+$('#btn-next').addEventListener('click', next);
+$('#btn-replay').addEventListener('click',()=> startGame(null, currentLabel==='Mixto'));
+$('#btn-home').addEventListener('click', goHome);
+  </script>
+</body>
+</html>
