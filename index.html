@@ -49,8 +49,6 @@
     @keyframes pulse {0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
     .art.pulse img{animation:pulse 450ms ease-out}
 
-
-    /* Pantalla final compacta y centrada */
 .result { display: grid; gap: 8px; }
 .result h2 { margin: 0 0 6px; text-align: center; color: #6a48ff; }
 .result .lead { margin: -2px 0 2px; text-align: center; color: var(--muted); }
@@ -62,7 +60,7 @@
 .chip{background:#f2ecff;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:.8rem}
 
 .art { align-items: center; }
-.art.end img { object-fit: cover; max-height: 260px; } /* mismo comportamiento que en juego */
+.art.end img { object-fit: cover; max-height: 260px; } 
 
   </style>
 </head>
@@ -106,7 +104,7 @@
       <div class="scene-grid" style="margin-top:14px">
         <section id="scene" class="scene"></section>
         <aside class="art" aria-hidden="true">
-          <img id="artImg" src="img/proyecto1.png" alt="imagen relacionada"/>
+          <img id="artImg" src="proyecto1.png" alt="imagen relacionada"/>
         </aside>
       </div>
 
@@ -138,9 +136,9 @@
 <script>
 
   const IMAGES = {
-    proyecto: ['img/proyecto1b.png','img/proyecto2b.png','img/proyecto3b.png','img/proyecto4b.png'],
-    ia:       ['img/ia1b.png','img/ia2b.png','img/ia3b.png','img/ia4b.png'],
-    virtual:  ['img/virtual1b.png','img/virtual2b.png','img/virtual3b.png','img/virtual4b.png']
+    proyecto: ['proyecto1b.png','proyecto2b.png','proyecto3b.png','proyecto4b.png'],
+    ia:       ['ia1b.png','ia2b.png','ia3b.png','ia4b.png'],
+    virtual:  ['virtual1b.png','virtual2b.png','virtual3b.png','virtual4b.png']
   };
 
 
@@ -311,9 +309,9 @@
     const op = scenes[step].options[idx];
     impact += op.impact; $('#impact').textContent = impact;
     addPractices(op.tags);
-    chosenLabels[step] = op.label;   // guardo la decisión
+    chosenLabels[step] = op.label;  
     $('#btn-next').disabled=false;
-    updateImage(currentKey, step); // pulso
+    updateImage(currentKey, step);
   }
 
   function next(){
@@ -366,7 +364,7 @@ if (ratio >= 0.8) {
   `;
   $('#scene').innerHTML = html;
 
-  art.src = 'img/final.png';
+  art.src = 'final.png';
   document.querySelector('aside.art')?.classList.add('end');
 
   setModeResults();
@@ -397,3 +395,4 @@ if (ratio >= 0.8) {
 
 </body>
 </html>
+
